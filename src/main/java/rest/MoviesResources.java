@@ -191,7 +191,7 @@ public class MoviesResources {
             film.setCast(new ArrayList<Actor>());
         }
 
-        db.assign(actor, film);;
+        db.assign(actor, film);
         return Response.ok().build();
     }
 
