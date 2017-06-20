@@ -1,14 +1,14 @@
 package rest;
 
+
 import domain.Actor;
 import domain.Comment;
 import domain.Film;
-import domain.services.FilmOfActor;
+import domain.Rating;
+import domain.services.ActorService;
 import domain.services.FilmService;
 
-
 import javax.ws.rs.*;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -20,33 +20,39 @@ import java.util.List;
 @Path("/films")
 public class MoviesResources {
 
-
-    private FilmService db = new FilmService();
+    private int commId = 0;
+    private ActorService Adb = new ActorService();
+    private FilmService Fdb = new FilmService();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Film> getAll(){
-
-        return db.getAll();
+        return Fdb.getAll();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response add(Film film){
-
-        db.add(film);
+    public Response Add(Film film){
+        Fdb.add(film);
         return Response.ok(film.getId()).build();
     }
+
+
+
+
+
+
+
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get (@PathParam("id") int id){
-
-        Film result = db.get(id);
-        if(result==null){
+    public Response get(@PathParam("id") int id){
+        Film result = Fdb.get(id);
+        if(result == null){
             return Response.status(404).build();
         }
+
         return Response.ok(result).build();
     }
 
@@ -54,145 +60,162 @@ public class MoviesResources {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int id, Film film){
-        Film result = db.get(id);
-        if(result==null){
+        Film result = Fdb.get(id);
+        if(result == null)
             return Response.status(404).build();
-        }
         film.setId(id);
-        db.update(film);
-        return Response.ok().build();
-    }
-
-    @GET
-    @Path("/{id}/comments")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Comment> getComments(@PathParam("id") int id){
-        Film result = db.get(id);
-        if(result==null){
-            return null;
+        for(Actor a: Adb.getAll()){
+            for(Film x : a.getFilms()){
+                if(x.getTitle().equalsIgnoreCase(result.getTitle())){
+                    x.setTitle(film.getTitle());
+                }
+            }
         }
-        if(result.getComments()==null){
-            result.setComments(new ArrayList<Comment>());
-        }
-        return result.getComments();
-
-    }
-
-    @POST
-    @Path("/{id}/comments")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response add(@PathParam("id") int id, Comment comment){
-        Film result = db.get(id);
-        if(result==null){
-            return Response.status(404).build();
-        }
-        if(result.getComments()==null){
-            result.setComments(new ArrayList <Comment>());
-        }
-        db.add(result, comment);
+        Fdb.update(film);
         return Response.ok().build();
     }
 
     @DELETE
-    @Path("/{filmId}/comments/{commentId}")
-    public Response delete(@PathParam("filmId") int filmId, @PathParam("commentId") int commentId){
-
-        Film result = db.get(filmId);
-        if(result==null){
+    @Path("/{id}")
+    public Response delete(@PathParam("id") int id){
+        Film result = Fdb.get(id);
+        if(result == null)
             return Response.status(404).build();
-        }
-        for(Comment c: result.getComments()){
-            if(c.getId()==commentId)
-                result.getComments().remove(c);
-            return Response.ok().build();
-        }
-        return Response.status(404).build();
+        Fdb.delete(result);
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("/{movieId}/comments")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Comment> getComments(@PathParam("movieId") int movieId){
+        Film result = Fdb.get(movieId);
+        if(result == null)
+            return null;
+        if(result.getComments() == null)
+            result.setComments(new ArrayList<Comment>());
+        return result.getComments();
     }
 
     @POST
-    @Path("/{id}/rate/{rating}")
+    @Path("/{id}/comments")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response rate(@PathParam("id") int id, @PathParam("rating") int rating){
-        Film result = db.get(id);
-        if(result==null){
+    public Response addComments(@PathParam("id") int movieId, Comment comments){
+        Film result = Fdb.get(movieId);
+        if(result == null)
             return Response.status(404).build();
+        if(result.getComments() == null)
+            result.setComments(new ArrayList<Comment>());
+        for(Comment com : result.getComments())
+        {
+            commId++;
         }
-        db.rate(result, (float)rating);
+        comments.setId(++commId);
+        result.getComments().add(comments);
+        return Response.ok().build();
+    }
+    @DELETE
+    @Path("/{id}/comments/{commentId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response removeComments(@PathParam("id") int movieId, @PathParam("commentId") int commentId){
+        Film result = Fdb.get(movieId);
+        commentId--;
+        boolean choose = false;
+        if(result == null)
+            return Response.status(404).build();
+
+        result.getComments().remove(commentId);
+
+        return Response.ok().build();
+    }
+
+    //---
+
+    @GET
+    @Path("/{movieId}/grades")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Rating> getGrade(@PathParam("movieId") int movieId){
+        Film result = Fdb.get(movieId);
+        double x= 0;
+        int i = 0;
+        if(result == null)
+            return null;
+        if(result.getRatings() == null)
+            result.setRatings(new ArrayList<Rating>());
+        for(Rating rating : result.getRatings())
+        {
+            x += rating.getRating();
+            i++;
+        }
+        x = x/i;
+        Rating r = new Rating();
+        r.setRating(x);
+        result.setRatings(new ArrayList<Rating>());
+        result.getRatings().add(r);
+        return result.getRatings();
+    }
+
+    @POST
+    @Path("/{id}/grades")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addGrade(@PathParam("id") int movieId, Rating rating){
+        Film result = Fdb.get(movieId);
+        if(result == null)
+            return Response.status(404).build();
+        if(result.getRatings() == null)
+            result.setRatings(new ArrayList<Rating>());
+        result.getRatings().add(rating);
+        return Response.ok().build();
+    }
+
+    //Actors =================================
+
+    @POST
+    @Path("/{id}/actors")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addActor(@PathParam("id") int movieId, Actor actor){
+        Film result = Fdb.get(movieId);
+        boolean choose = false;
+        if(result == null)
+            return Response.status(404).build();
+        if(result.getActors() == null)
+            result.setActors(new ArrayList<Actor>());
+        result.getActors().add(actor);
+        for(Actor a : Adb.getAll()){
+            if(actor.getName().equalsIgnoreCase(a.getName()) && actor.getSurname().equalsIgnoreCase(a.getSurname())){
+                choose = true;
+                break;
+            }
+        }
+        Film movie = new Film();
+        movie.setId(result.getId());
+        movie.setTitle(result.getTitle());
+        if(!choose){
+            actor.setFilms(new ArrayList<Film>());
+            actor.getFilms().add(movie);
+            Adb.add(actor);
+        }
+        else {
+            for(Actor a2 : Adb.getAll()){
+                if(actor.getName().equalsIgnoreCase(a2.getName()) && actor.getSurname().equalsIgnoreCase(a2.getSurname())){
+                    a2.getFilms().add(movie);
+                }
+            }
+        }
         return Response.ok().build();
     }
 
 
     @GET
-    @Path("/actors")
+    @Path("/{id}/actors")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllActors(){
-
-        List<Actor> list = db.getAllActors();
-        GenericEntity<List<Actor>> entity = new GenericEntity<List<Actor>>(list) {};
-        return Response.ok(entity).build();
-
-    }
-
-    @GET
-    @Path("/{filmId}/actors")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getActorsOfFilm (@PathParam("filmId") int filmId){
-
-        List <Actor> result = db.getActorsOfFilm(filmId);
-        if(result==null){
-            return Response.status(404).build();
-        }
-        GenericEntity<List<Actor>> entity = new GenericEntity<List<Actor>>(result) {};
-        return Response.ok(entity).build();
-
-    }
-
-
-    @GET
-    @Path("/actors/{actorId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getFilmsOfActor (@PathParam("actorId") int actorId){
-
-        List <FilmOfActor> result = db.getFilmsOfActor(actorId);
-        if(result==null){
-            return Response.status(404).build();
-        }
-        GenericEntity<List<FilmOfActor>> entity = new GenericEntity<List<FilmOfActor>>(result) {};
-        return Response.ok(entity).build();
-    }
-
-    @POST
-    @Path("/actors")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response add(Actor actor){
-
-        db.add(actor);
-        return Response.ok(actor.getId()).build();
-    }
-
-    @POST
-    @Path("/{filmId}/actors/{actorId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response assign(@PathParam("actorId") int actorId, @PathParam("filmId") int filmId){
-
-
-        Actor actor = db.getActor(actorId);
-        Film film = db.get(filmId);
-
-        if(actor==null || film==null){
-            return Response.status(404).build();
-        }
-
-        if(actor.getFilms()==null){
-            actor.setFilms(new ArrayList<FilmOfActor>());
-        }
-
-        if(film.getCast()==null){
-            film.setCast(new ArrayList<Actor>());
-        }
-
-        db.assign(actor, film);
-        return Response.ok().build();
+    public List<Actor> getActors(@PathParam("id") int id){
+        Film result = Fdb.get(id);
+        if(result == null)
+            return null;
+        if(result.getActors() == null)
+            result.setActors(new ArrayList<Actor>());
+        return result.getActors();
     }
 
 }

@@ -1,7 +1,5 @@
 package domain;
 
-import domain.services.FilmOfActor;
-
 import java.util.List;
 
 /**
@@ -13,7 +11,7 @@ public class Actor {
     private int id;
     private String name;
     private String surname;
-    private List<FilmOfActor> films;
+    private List<Film> films;
 
     public int getId() {
         return id;
@@ -39,11 +37,11 @@ public class Actor {
         this.surname = surname;
     }
 
-    public List<FilmOfActor> getFilms() {
+    public List<Film> getFilms() {
         return films;
     }
 
-    public void setFilms(List<FilmOfActor> films) {
+    public void setFilms(List<Film> films) {
         this.films = films;
     }
 }

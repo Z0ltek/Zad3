@@ -10,15 +10,11 @@ public class Film {
 
     private int id;
     private int year;
-    private float rating;
     private String title;
-    private String director;
-    private String screenplay;
-    private String genre;
-    private String production;
-    private String description;
+    private String info;
+    private List<Rating> ratings;
     private List<Comment> comments;
-    private List<Actor> cast;
+    private List<Actor> actors;
 
     public int getId() {
         return id;
@@ -36,14 +32,6 @@ public class Film {
         this.year = year;
     }
 
-    public float getRating() {
-        return rating;
-    }
-
-    public void setRating(float rating) {
-        this.rating = rating;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -52,44 +40,12 @@ public class Film {
         this.title = title;
     }
 
-    public String getDirector() {
-        return director;
+    public List<Rating> getRatings() {
+        return ratings;
     }
 
-    public void setDirector(String director) {
-        this.director = director;
-    }
-
-    public String getScreenplay() {
-        return screenplay;
-    }
-
-    public void setScreenplay(String screenplay) {
-        this.screenplay = screenplay;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public String getProduction() {
-        return production;
-    }
-
-    public void setProduction(String production) {
-        this.production = production;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
     }
 
     public List<Comment> getComments() {
@@ -100,11 +56,19 @@ public class Film {
         this.comments = comments;
     }
 
-    public List<Actor> getCast() {
-        return cast;
+    public String getInfo() {
+        return info;
     }
 
-    public void setCast(List<Actor> cast) {
-        this.cast = cast;
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public List<Actor> getActors() {
+        return actors;
+    }
+
+    public void setActors(List<Actor> actors) {
+        this.actors = actors;
     }
 }

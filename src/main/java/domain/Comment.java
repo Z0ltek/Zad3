@@ -7,9 +7,8 @@ package domain;
 public class Comment {
 
     private int id;
-    private String contents;
-    private String author;
-    private String date;
+    private String comment;
+
 
     public int getId() {
         return id;
@@ -19,27 +18,13 @@ public class Comment {
         this.id = id;
     }
 
-    public String getContents() {
-        return contents;
+    public String getComment() {
+        return comment;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
-    public String getAuthor() {
-        return author;
-    }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
 }
