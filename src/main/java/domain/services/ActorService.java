@@ -31,18 +31,4 @@ public class ActorService {
         a.setId(++currentId);
         db.add(a);
     }
-
-    public void update(Actor actor){
-        for(Actor a : db){
-            if(a.getId() == actor.getId()){
-                a.setName(actor.getName());
-                a.setSurname(actor.getSurname());
-                a.setFilms(actor.getFilms());
-            }
-        }
-    }
-
-    public void delete(Actor a){
-        db.remove(a);
-    }
 }

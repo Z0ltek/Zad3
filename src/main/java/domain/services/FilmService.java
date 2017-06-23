@@ -13,6 +13,7 @@ import java.util.*;
 public class FilmService {
 
    private static List<Film> db = new ArrayList<Film>();
+   private static Map<Film, Float> map = new HashMap<Film, Float>();
    private static int currentId = 0;
    public List<Film> getAll(){
        return db;
@@ -29,6 +30,7 @@ public class FilmService {
 
    public void add(Film f){
        f.setId(++currentId);
+       f.setRating(0);
        db.add(f);
    }
 
@@ -37,8 +39,28 @@ public class FilmService {
            if(f.getId() == film.getId()){
                f.setTitle(film.getTitle());
                f.setActors(film.getActors());
+               f.setYear(film.getYear());
+               f.setInfo(film.getInfo());
            }
        }
+   }
+
+   public void addComm(Film film, Comment comment){
+       comment.setId(film.getComments().size()+1);
+       film.getComments().add(comment);
+   }
+
+   public void rate(Film film, float rate){
+
+       for(Film key : map.keySet()){
+           if(film==key){
+               map.put(key, map.get(key)+1);
+               film.setRating((film.getRating())+rate/map.get(key));
+               return;
+           }
+       }
+       map.put(film, (float)1);
+       film.setRating(rate);
    }
 
    public void delete(Film film){

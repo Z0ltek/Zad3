@@ -12,7 +12,7 @@ public class Film {
     private int year;
     private String title;
     private String info;
-    private List<Rating> ratings;
+    private float rating;
     private List<Comment> comments;
     private List<Actor> actors;
 
@@ -40,12 +40,12 @@ public class Film {
         this.title = title;
     }
 
-    public List<Rating> getRatings() {
-        return ratings;
+    public float getRating() {
+        return rating;
     }
 
-    public void setRatings(List<Rating> ratings) {
-        this.ratings = ratings;
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
     public List<Comment> getComments() {

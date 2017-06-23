@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.List;
+
 /**
  * Created by zolto on 11.05.2017.
  */
@@ -7,7 +9,8 @@ package domain;
 public class Comment {
 
     private int id;
-    private String comment;
+    private String content;
+
 
 
     public int getId() {
@@ -18,13 +21,11 @@ public class Comment {
         this.id = id;
     }
 
-    public String getComment() {
-        return comment;
+    public String getContent() {
+        return content;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setContent(String content) {
+        this.content = content;
     }
-
-
 }

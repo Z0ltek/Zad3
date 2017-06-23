@@ -1,10 +1,10 @@
 package rest;
 
 
+import com.sun.org.apache.regexp.internal.RE;
 import domain.Actor;
 import domain.Comment;
 import domain.Film;
-import domain.Rating;
 import domain.services.ActorService;
 import domain.services.FilmService;
 
@@ -24,12 +24,14 @@ public class MoviesResources {
     private ActorService Adb = new ActorService();
     private FilmService Fdb = new FilmService();
 
+    // pobieranie wszystkich filow
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Film> getAll(){
         return Fdb.getAll();
     }
 
+    //dodawanie filmu
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response Add(Film film){
@@ -40,7 +42,7 @@ public class MoviesResources {
 
 
 
-
+    //wyswietlanie filmu o danym ID
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -53,6 +55,8 @@ public class MoviesResources {
         return Response.ok(result).build();
     }
 
+
+    //edycja filmu
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -66,12 +70,17 @@ public class MoviesResources {
                 if(x.getTitle().equalsIgnoreCase(result.getTitle())){
                     x.setTitle(film.getTitle());
                 }
+                if(x.getInfo().equalsIgnoreCase(result.getInfo())){
+                    x.setInfo(film.getInfo());
+                }
             }
         }
         Fdb.update(film);
         return Response.ok().build();
     }
 
+
+    //usuwanie filmu o danym id
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") int id){
@@ -82,91 +91,72 @@ public class MoviesResources {
         return Response.ok().build();
     }
 
+
+    //wyswietlanie komentarzy do danego filmu
     @GET
     @Path("/{movieId}/comments")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Comment> getComments(@PathParam("movieId") int movieId){
         Film result = Fdb.get(movieId);
-        if(result == null)
+        if(result == null) {
             return null;
-        if(result.getComments() == null)
+        }
+        if(result.getComments() == null) {
             result.setComments(new ArrayList<Comment>());
+        }
         return result.getComments();
     }
 
+    //dodawanie komentarza do danego filmu
     @POST
     @Path("/{id}/comments")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addComments(@PathParam("id") int movieId, Comment comments){
+    public Response addComm(@PathParam("id") int movieId, Comment comments){
         Film result = Fdb.get(movieId);
-        if(result == null)
+        if(result == null) {
             return Response.status(404).build();
+        }
         if(result.getComments() == null)
             result.setComments(new ArrayList<Comment>());
-        for(Comment com : result.getComments())
-        {
-            commId++;
-        }
-        comments.setId(++commId);
-        result.getComments().add(comments);
+        Fdb.addComm(result, comments);
         return Response.ok().build();
     }
+
+
+    //usuwanie komentarza pod danym filmem
     @DELETE
     @Path("/{id}/comments/{commentId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeComments(@PathParam("id") int movieId, @PathParam("commentId") int commentId){
         Film result = Fdb.get(movieId);
-        commentId--;
-        boolean choose = false;
-        if(result == null)
+        if(result == null) {
             return Response.status(404).build();
-
-        result.getComments().remove(commentId);
-
-        return Response.ok().build();
-    }
-
-    //---
-
-    @GET
-    @Path("/{movieId}/grades")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Rating> getGrade(@PathParam("movieId") int movieId){
-        Film result = Fdb.get(movieId);
-        double x= 0;
-        int i = 0;
-        if(result == null)
-            return null;
-        if(result.getRatings() == null)
-            result.setRatings(new ArrayList<Rating>());
-        for(Rating rating : result.getRatings())
-        {
-            x += rating.getRating();
-            i++;
         }
-        x = x/i;
-        Rating r = new Rating();
-        r.setRating(x);
-        result.setRatings(new ArrayList<Rating>());
-        result.getRatings().add(r);
-        return result.getRatings();
+        for(Comment comment : result.getComments()){
+            if(comment.getId() == commentId){
+                result.getComments().remove(comment);
+                return Response.ok().build();
+            }
+        }
+        return Response.status(404).build();
     }
 
+
+    //dodaje ocene do danego filmu
     @POST
-    @Path("/{id}/grades")
+    @Path("/{id}/rate/{rating}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addGrade(@PathParam("id") int movieId, Rating rating){
+    public Response rate(@PathParam("id") int movieId, @PathParam("rating") int rating){
         Film result = Fdb.get(movieId);
-        if(result == null)
+        if(result == null) {
             return Response.status(404).build();
-        if(result.getRatings() == null)
-            result.setRatings(new ArrayList<Rating>());
-        result.getRatings().add(rating);
+        }
+        Fdb.rate(result, (float)rating);
         return Response.ok().build();
     }
 
-    //Actors =================================
 
+    //Dodaje aktora
     @POST
     @Path("/{id}/actors")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -202,7 +192,7 @@ public class MoviesResources {
         return Response.ok().build();
     }
 
-
+    //Wyswietka aktora
     @GET
     @Path("/{id}/actors")
     @Produces(MediaType.APPLICATION_JSON)
