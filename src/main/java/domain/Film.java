@@ -2,6 +2,7 @@ package domain;
 
 import java.util.List;
 
+
 /**
  * Created by zolto on 11.05.2017.
  */

@@ -38,7 +38,6 @@ public class FilmService {
        for(Film f : db){
            if(f.getId() == film.getId()){
                f.setTitle(film.getTitle());
-               f.setActors(film.getActors());
                f.setYear(film.getYear());
                f.setInfo(film.getInfo());
            }
@@ -52,15 +51,17 @@ public class FilmService {
 
    public void rate(Film film, float rate){
 
-       for(Film key : map.keySet()){
+       for (Film key : map.keySet()) {
            if(film==key){
                map.put(key, map.get(key)+1);
-               film.setRating((film.getRating())+rate/map.get(key));
+               film.setRating((film.getRating()+rate)/map.get(key));
                return;
            }
        }
+
        map.put(film, (float)1);
        film.setRating(rate);
+
    }
 
    public void delete(Film film){

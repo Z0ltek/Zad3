@@ -62,19 +62,10 @@ public class MoviesResources {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int id, Film film){
         Film result = Fdb.get(id);
-        if(result == null)
+        if(result == null) {
             return Response.status(404).build();
-        film.setId(id);
-        for(Actor a: Adb.getAll()){
-            for(Film x : a.getFilms()){
-                if(x.getTitle().equalsIgnoreCase(result.getTitle())){
-                    x.setTitle(film.getTitle());
-                }
-                if(x.getInfo().equalsIgnoreCase(result.getInfo())){
-                    x.setInfo(film.getInfo());
-                }
-            }
         }
+        film.setId(id);
         Fdb.update(film);
         return Response.ok().build();
     }
@@ -144,9 +135,9 @@ public class MoviesResources {
 
     //dodaje ocene do danego filmu
     @POST
-    @Path("/{id}/rate/{rating}")
+    @Path("/{id}/rate/{rate}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response rate(@PathParam("id") int movieId, @PathParam("rating") int rating){
+    public Response rate(@PathParam("id") int movieId,@PathParam("rate") int rating){
         Film result = Fdb.get(movieId);
         if(result == null) {
             return Response.status(404).build();
