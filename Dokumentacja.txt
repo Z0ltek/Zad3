@@ -1,0 +1,133 @@
+'restapp' REST Endpoints
+GET     /restapp/rest/actors
+POST    /restapp/rest/actors
+GET     /restapp/rest/actors/{actorId}/movies
+GET     /restapp/rest/actors/{id}
+POST    /restapp/rest/actors/{id}/movies
+GET     /restapp/rest/movie
+POST    /restapp/rest/movie
+DELETE  /restapp/rest/movie/{id}
+GET     /restapp/rest/movie/{id}
+PUT     /restapp/rest/movie/{id}
+GET     /restapp/rest/movie/{id}/actors
+POST    /restapp/rest/movie/{id}/actors
+POST    /restapp/rest/movie/{id}/comments
+DELETE  /restapp/rest/movie/{id}/comments/{commentId}
+POST    /restapp/rest/movie/{id}/rate
+GET     /restapp/rest/movie/{movieId}/comments
+GET     /restapp/rest/test
+
+
+========= PRZYKŁADOWE ZAPYTANIA  ==========
+
+Dodawanie filmów  POST:
+http://localhost:8080/restapp/rest/movie
+{
+"title" : "Straznicy Galaktyki",
+"info" : "Smieszny film w kosmocie o sierocie z Ziemi",
+"year" : "2015"
+}
+
+{
+"title" : "Grawitacja",
+"info" : "Akcja na orbicie ziemi z Julia Roberts",
+"year" : "2016"
+}
+
+{
+"title" : "Harry Potter",
+"info" : "O ciezkim dziecinstwie chlopca z blizna",
+"year" : "1999"
+}
+
+Wyświetlanie filmów GET: 
+http://localhost:8080/restapp/rest/movie
+
+Usuwanie fimu nr 1 DELETE:
+http://localhost:8080/restapp/rest/movie/1
+
+//--------------------------------------
+
+Dodawanie komentarzy do filmu 1 POST: 
+http://localhost:8080/restapp/rest/movie/1/comments
+{
+"content" : "Polecam"
+}
+
+{
+"content" : "Ciekawy film"
+}
+
+{
+"content" : "Lubie to!"
+}
+Wyświetlanie komentarzy do filmu nr 1 GET:
+http://localhost:8080/restapp/rest/movie/1/comments
+
+USUWANIE 3 komentarza z filmu nr 1 DELETE: 
+http://localhost:8080/restapp/rest/movie/1/comments/3
+//----------------------------------------------------------------------------------------------
+Dodawanie ocen do filmu nr 3 POST:
+http://localhost:8080/restapp/rest/movie/3/rate/2
+
+http://localhost:8080/restapp/rest/movie/3/rate/6
+
+
+Wyświetlanie średniej ocen filmu nr 1 GET:						
+http://localhost:8080/restapp/rest/movie/3/rate
+
+//--------------------------------------------------------------------------------------------------
+Edycja filmu nr 2 PUT:
+http://localhost:8080/restapp/rest/movie/2
+{
+"title" : "Poprawna nazwa",
+"info" : "Poprawny opis"
+}
+
+Sprawdzenie czy film nr 2 został zaktualizowany GET:
+http://localhost:8080/restapp/rest/movie/2
+
+//-----------------------------------------------------------------------------------------------
+
+
+Dodawanie aktora do filmu nr 1 POST:
+http://localhost:8080/restapp/rest/movie/1/actors
+{
+"name" : "Stefan",
+"surname" : "Jakis"
+}
+
+{
+"name" : "Rysiek",
+"surname" : "Z Klanu"
+}
+
+Sprawdzenie czy został dodany GET:
+http://localhost:8080/restapp/rest/movie/1/actors
+
+Dodanie tego samego aktora do filmu nr. 2 POST:
+http://localhost:8080/restapp/rest/movie/2/actors
+
+{
+"name" : "Rysiek",
+"surname" : "Z Klanu"
+}
+
+teraz używając komendy GET : 
+http://localhost:8080/restapp/rest/actors
+Można zauważyc że jeden aktor gra w 2 filmach.
+//-------------------------------------------------------------------------------------------------
+Stworzenie nowego aktora POST:
+http://localhost:8080/restapp/rest/actors
+
+{
+"name" : "Rysiek",
+"surname" : "Z Klanu"
+}
+
+Wyświetlenie aktora o podanym id i w jakich filmach gra GET: 
+http://localhost:8080/restapp/rest/actors/2
+//-------------------------------------------------------------------------------------------------
+Wyświetlanie tylko filmów danego aktora GET:
+http://localhost:8080/restapp/rest/actors/1/movies
+http://localhost:8080/restapp/rest/actors/2/movies
