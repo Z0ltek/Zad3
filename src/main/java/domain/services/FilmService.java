@@ -36,7 +36,7 @@ public class FilmService {
        for(Film f : db){
            if(f.getId() == film.getId()){
                f.setTitle(film.getTitle());
-               f.setCast(film.getCast());
+               f.setActors(film.getActors());
            }
        }
    }

@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by zolto on 12.05.2017.
  */
-@Path("/films")
+@Path("/movie")
 public class MoviesResources {
 
     private int commId = 0;
@@ -36,9 +36,6 @@ public class MoviesResources {
         Fdb.add(film);
         return Response.ok(film.getId()).build();
     }
-
-
-
 
 
 
